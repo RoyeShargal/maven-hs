@@ -2,8 +2,9 @@ import { NextFunction, Request, Response } from "express";
 import axios from "axios";
 
 import { UserModel } from "../..";
-import { usersSorterByStepsAggregation } from "./users.aggregations";
+import { usersSortedByMaxStepsAggregation } from "./users.aggregations";
 import { guessUserGender } from "./utils";
+import { logger } from "../../logger";
 
 export const CreateUser = async (
   req: Request,
@@ -14,6 +15,7 @@ export const CreateUser = async (
   const userExists = await UserModel.findOne({ username: userName });
 
   if (userExists) {
+    logger.error("User already exists!");
     res.status(400).json({ error: true, errMessage: "Username taken!" });
     return;
   }
@@ -42,6 +44,7 @@ export const CreateUser = async (
     createdUser._id,
     userAddedData
   );
+  logger.info(`Finished enriching user, data: ${enrichedUser}`);
 
   return enrichedUser;
 };
@@ -52,26 +55,31 @@ export const GetScores = async (
   next: NextFunction
 ) => {
   const usersSortedByScores = await UserModel.aggregate(
-    usersSorterByStepsAggregation
+    usersSortedByMaxStepsAggregation
   );
+  logger.info(`Fetched users sroted by scores: ${usersSortedByScores}`);
   return usersSortedByScores;
 };
 
-export const putNewScore = async (
+export const newScore = async (
   req: Request,
   res: Response,
   next: NextFunction
 ) => {
   const { username, score } = req.body;
   const currentUser = await UserModel.findOne({ username });
+
   // would do a middleware to check this :)
   const userId = currentUser?._id;
   if (!userId) return "user does not exist!";
   if (score === null) return "No score was sent!";
   const currentUserScore = currentUser?.maxStepsReached ?? 0;
+
   // if already had better/equal score
-  if (currentUserScore >= score)
+  if (currentUserScore >= score) {
     return "user already had a better/equal score!";
+  }
+
   // update score
   else {
     await UserModel.findByIdAndUpdate(userId, {

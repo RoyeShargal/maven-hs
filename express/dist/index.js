@@ -10,6 +10,7 @@ const cors_1 = __importDefault(require("cors"));
 const mongoose_1 = __importDefault(require("mongoose"));
 const Users_schema_1 = require("./app/users/Users.schema");
 const users_router_1 = require("./app/users/users.router");
+const logger_1 = require("./logger");
 dotenv_1.default.config();
 const app = (0, express_1.default)();
 const port = 3001; // process.env.PORT || 3001;
@@ -19,5 +20,5 @@ mongoose_1.default.connect(process.env.MONGO_DB_URL);
 exports.UserModel = mongoose_1.default.model("Users", Users_schema_1.usersSchema);
 app.use("/users", users_router_1.usersRouter);
 app.listen(port, () => {
-    console.log(`⚡️[server]: Server is running at http://localhost:${port}`);
+    logger_1.logger.info(`⚡️[server]: Server is running at http://localhost:${port}`);
 });

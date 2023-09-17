@@ -12,16 +12,18 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.putNewScore = exports.GetScores = exports.CreateUser = void 0;
+exports.newScore = exports.GetScores = exports.CreateUser = void 0;
 const axios_1 = __importDefault(require("axios"));
 const __1 = require("../..");
 const users_aggregations_1 = require("./users.aggregations");
 const utils_1 = require("./utils");
+const logger_1 = require("../../logger");
 const CreateUser = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     var _a;
     const userName = req.body.username;
     const userExists = yield __1.UserModel.findOne({ username: userName });
     if (userExists) {
+        logger_1.logger.error("User already exists!");
         res.status(400).json({ error: true, errMessage: "Username taken!" });
         return;
     }
@@ -40,15 +42,17 @@ const CreateUser = (req, res, next) => __awaiter(void 0, void 0, void 0, functio
         phone: enrichedUserData.phone,
     };
     const enrichedUser = yield __1.UserModel.findByIdAndUpdate(createdUser._id, userAddedData);
+    logger_1.logger.info(`Finished enriching user, data: ${enrichedUser}`);
     return enrichedUser;
 });
 exports.CreateUser = CreateUser;
 const GetScores = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
-    const usersSortedByScores = yield __1.UserModel.aggregate(users_aggregations_1.usersSorterByStepsAggregation);
+    const usersSortedByScores = yield __1.UserModel.aggregate(users_aggregations_1.usersSortedByMaxStepsAggregation);
+    logger_1.logger.info(`Fetched users sroted by scores: ${usersSortedByScores}`);
     return usersSortedByScores;
 });
 exports.GetScores = GetScores;
-const putNewScore = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+const newScore = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     var _b;
     const { username, score } = req.body;
     const currentUser = yield __1.UserModel.findOne({ username });
@@ -60,8 +64,9 @@ const putNewScore = (req, res, next) => __awaiter(void 0, void 0, void 0, functi
         return "No score was sent!";
     const currentUserScore = (_b = currentUser === null || currentUser === void 0 ? void 0 : currentUser.maxStepsReached) !== null && _b !== void 0 ? _b : 0;
     // if already had better/equal score
-    if (currentUserScore >= score)
+    if (currentUserScore >= score) {
         return "user already had a better/equal score!";
+    }
     // update score
     else {
         yield __1.UserModel.findByIdAndUpdate(userId, {
@@ -70,4 +75,4 @@ const putNewScore = (req, res, next) => __awaiter(void 0, void 0, void 0, functi
         return `Congratulations! new score: ${score}`;
     }
 });
-exports.putNewScore = putNewScore;
+exports.newScore = newScore;

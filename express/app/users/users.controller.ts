@@ -1,6 +1,7 @@
 import { NextFunction, Request, Response } from "express";
 
 import * as UsersService from "./users.service";
+import { logger } from "../../logger";
 
 export const createUser = async (
   req: Request,
@@ -31,8 +32,10 @@ export const getScores = async (
 ) => {
   try {
     const scoresResponse = await UsersService.GetScores(req, res, next);
+    logger.info(`received scores response in fn: getScores, data: ${scoresResponse}`)
     res.send(scoresResponse);
   } catch (err) {
+    logger.error(`Error in fn: getScores, err: ${err}`)
     res.status(500).json({ error: true, errMessage: "Server failed!" });
   }
 };
@@ -44,9 +47,11 @@ export const userNewScore = async (
   next: NextFunction
 ) => {
   try {
-    const putNewScoreResponse = await UsersService.putNewScore(req, res, next);
-    res.send(putNewScoreResponse);
+    const newScoreResponse = await UsersService.newScore(req, res, next);
+    logger.info(`updated used score, data: ${newScoreResponse}`)
+    res.send(newScoreResponse);
   } catch (err) {
+    logger.error(`Error in fn: userNewScore, err: ${err}`)
     res.status(500).json({ error: true, errMessage: "Server failed!" });
   }
 };

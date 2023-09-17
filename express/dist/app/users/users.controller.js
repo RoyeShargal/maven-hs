@@ -34,6 +34,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.userNewScore = exports.getScores = exports.createUser = void 0;
 const UsersService = __importStar(require("./users.service"));
+const logger_1 = require("../../logger");
 const createUser = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const userName = req.body.username;
@@ -55,9 +56,11 @@ exports.createUser = createUser;
 const getScores = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const scoresResponse = yield UsersService.GetScores(req, res, next);
+        logger_1.logger.info(`received scores response in fn: getScores, data: ${scoresResponse}`);
         res.send(scoresResponse);
     }
     catch (err) {
+        logger_1.logger.error(`Error in fn: getScores, err: ${err}`);
         res.status(500).json({ error: true, errMessage: "Server failed!" });
     }
 });
@@ -65,10 +68,12 @@ exports.getScores = getScores;
 // user-new-score
 const userNewScore = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const putNewScoreResponse = yield UsersService.putNewScore(req, res, next);
-        res.send(putNewScoreResponse);
+        const newScoreResponse = yield UsersService.newScore(req, res, next);
+        logger_1.logger.info(`updated used score, data: ${newScoreResponse}`);
+        res.send(newScoreResponse);
     }
     catch (err) {
+        logger_1.logger.error(`Error in fn: userNewScore, err: ${err}`);
         res.status(500).json({ error: true, errMessage: "Server failed!" });
     }
 });

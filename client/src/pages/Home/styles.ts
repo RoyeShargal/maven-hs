@@ -11,7 +11,6 @@ export const HomepageContainer = styled.div`
   gap: ${SPACING[3]};
 `;
 
-
 export const StyledHelloTitle = styled.p`
   margin-bottom: ${SPACING[3]};
 `;

@@ -20,6 +20,7 @@ usersRouter.post(
   }
 );
 
+// post/update user new score
 usersRouter.post(
   "/new-score",
   async (req: Request, res: Response, next: NextFunction) => {

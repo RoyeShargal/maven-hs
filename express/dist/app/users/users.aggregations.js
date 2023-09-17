@@ -1,7 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.usersSorterByStepsAggregation = void 0;
-exports.usersSorterByStepsAggregation = [
+exports.usersSortedByMaxStepsAggregation = void 0;
+exports.usersSortedByMaxStepsAggregation = [
     {
         $sort: {
             maxStepsReached: -1,

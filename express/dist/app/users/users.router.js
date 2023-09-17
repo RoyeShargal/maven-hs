@@ -44,6 +44,7 @@ exports.usersRouter.get("/scores", (req, res, next) => __awaiter(void 0, void 0,
 exports.usersRouter.post("/create", (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     yield UsersController.createUser(req, res, next);
 }));
+// post/update user new score
 exports.usersRouter.post("/new-score", (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     yield UsersController.userNewScore(req, res, next);
 }));

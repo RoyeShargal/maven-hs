@@ -29,7 +29,7 @@ const Gamepage: React.FC = () => {
   const [userReactionMessage, setUserReactionMessage] = useState("");
   const [currentScore, setCurrentScore] = useState(0);
   const currentUsername = useRef(localStorage.getItem("username"));
-  
+
   useEffect(() => {
     if (gameState === GameStates.OBJECT_APPEARS) {
       const activateTimeout = timeLeftForObject > 0;
@@ -45,7 +45,7 @@ const Gamepage: React.FC = () => {
         ? setTimeout(() => setWaitingTime(waitingTime - 0.1), 100)
         : restartObject();
     }
-  }, [waitingTime]);
+  }, [waitingTime, gameState]);
 
   const restartObject = () => {
     setTimeLeftForObject(1);
@@ -56,7 +56,7 @@ const Gamepage: React.FC = () => {
 
   const onGameWin = async () => {
     const newScore = currentScore + 1;
-    // send score to api :)
+    // send score to api
     await postNewScore({
       score: newScore,
       username: currentUsername.current,
@@ -65,16 +65,21 @@ const Gamepage: React.FC = () => {
   };
 
   const restartGame = useCallback(() => {
+    // sets a random side to the object
     const objectSideRandomNumber = generateRandomNumber(0, 1);
     const objSide = objectSideRandomNumber > 0.5 ? "right" : "left";
     setObjectPosition(objSide);
+
+    // sets a random waiting time each round
     const randomWaitingTime = generateRandomNumber(2, 5);
     setTimeLeftForObject(1);
     setGameState(GameStates.WAITING);
     setWaitingTime(randomWaitingTime);
+
+    // resets the message shown after the waiting time ends
     setTimeout(() => {
       setUserReactionMessage("");
-    }, randomWaitingTime * 1000); // reset message when new round begins :)
+    }, randomWaitingTime * 1000);
   }, []);
 
   const onUserKeyPressed = (

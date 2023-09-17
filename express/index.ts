@@ -5,6 +5,7 @@ import mongoose from "mongoose";
 
 import { usersSchema } from "./app/users/Users.schema";
 import { usersRouter } from "./app/users/users.router";
+import { logger } from "./logger";
 
 dotenv.config();
 const app: Express = express();
@@ -19,5 +20,5 @@ export const UserModel = mongoose.model("Users", usersSchema);
 app.use("/users", usersRouter);
 
 app.listen(port, () => {
-  console.log(`⚡️[server]: Server is running at http://localhost:${port}`);
+  logger.info(`⚡️[server]: Server is running at http://localhost:${port}`);
 });

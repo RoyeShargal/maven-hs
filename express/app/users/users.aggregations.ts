@@ -1,6 +1,6 @@
 import { PipelineStage } from "mongoose";
 
-export const usersSorterByStepsAggregation: PipelineStage[] = [
+export const usersSortedByMaxStepsAggregation: PipelineStage[] = [
     {
       $sort: {
         maxStepsReached: -1,
