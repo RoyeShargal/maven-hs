@@ -1,6 +1,7 @@
 # mavens
 to run the project, make sure that:
-1. docker desktop is running on your computer
+1. you have cloned the repo
+2. docker desktop is running on your computer
 2. execute docker-compose up --build
 
 Incase that you don't have docker desktop:
