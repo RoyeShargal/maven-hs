@@ -11,7 +11,7 @@ interface CircleObjectProps {
 const CircleObject: React.FC<CircleObjectProps> = ({ objectPosition }) => {
   // generating random vertical position
   const objectVerticalPosition = useMemo(
-    () => `${generateRandomNumber(0, 100)}vh`,
+    () => `${generateRandomNumber(10, 90)}vh`,
     []
   );
 
